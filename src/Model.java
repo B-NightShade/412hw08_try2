@@ -51,4 +51,14 @@ public class Model {
             e.printStackTrace();
         }
     }
+
+    void delConnection(){
+        try {
+            Connection conn = DriverManager.getConnection("jdbc:sqlite:database.db");
+            conn.createStatement().executeUpdate(String.format("DELETE FROM students WHERE id = %d;", Controller.id));
+            conn.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
 }

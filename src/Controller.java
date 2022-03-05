@@ -4,8 +4,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -51,7 +49,12 @@ public class Controller {
         @Override
         public void actionPerformed(ActionEvent e) {
             name = v1.textFieldName.getText();
-            age = Integer.parseInt(v1.textFieldAge.getText());
+            try {
+                age = Integer.parseInt(v1.textFieldAge.getText());
+            }
+            catch (NumberFormatException i){
+                i.printStackTrace();
+            }
             m1.createConnection();
         }
     }
@@ -65,9 +68,22 @@ public class Controller {
                 if (index != -1){
                     String s = v1.listModel.elementAt(index);
                     String[] words = s.trim().split("\\s+");
-                    id = Integer.parseInt(words[0]);
+                    try {
+                        id = Integer.parseInt(words[0]);
+                    }
+                    catch(NumberFormatException i){
+                        i.printStackTrace();
+                    }
                     String name = words[1];
-                    int age = Integer.parseInt(words[2]);
+                    try {
+                        age = Integer.parseInt(words[2]);
+                    }
+                    catch(NumberFormatException j){
+                        j.printStackTrace();
+                    }
+                    catch(ArrayIndexOutOfBoundsException b){
+                        b.printStackTrace();
+                    }
                     v1.textFieldName2.setText(name);
                     v1.textFieldAge2.setText(String.valueOf(age));
                     v1.jButton2.setEnabled(true);
@@ -83,7 +99,12 @@ public class Controller {
         public void actionPerformed(ActionEvent e) {
             if (id != -1) {
                 name = v1.textFieldName2.getText();
-                age = Integer.parseInt(v1.textFieldAge2.getText());
+                try {
+                    age = Integer.parseInt(v1.textFieldAge2.getText());
+                }
+                catch(NumberFormatException i){
+                    i.printStackTrace();
+                }
                 m1.updateConnection();
             }
         }
@@ -93,18 +114,27 @@ public class Controller {
 
         @Override
         public void actionPerformed(ActionEvent e) {
+            id = 0;
+            String[] words;
             int i = v1.jList.getSelectedIndex();
             String s = v1.jList.getSelectedValue();
-            String[] words = s.trim().split(" ");
-            int id = Integer.parseInt(words[0]);
-            v1.listModel.remove(i);
             try {
-                Connection conn = DriverManager.getConnection("jdbc:sqlite:database.db");
-                conn.createStatement().executeUpdate(String.format("DELETE FROM students WHERE id = %d;", id));
-                conn.close();
-            } catch (SQLException ex) {
-                ex.printStackTrace();
+                words = s.trim().split(" ");
+                id = Integer.parseInt(words[0]);
             }
+            catch(NullPointerException k){
+                k.printStackTrace();
+            }
+            catch(NumberFormatException j){
+                j.printStackTrace();
+            }
+            try {
+                v1.listModel.remove(i);
+            }
+            catch(ArrayIndexOutOfBoundsException c){
+                c.printStackTrace();
+            }
+            m1.delConnection();
         }
     }
 }
